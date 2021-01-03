@@ -2,15 +2,17 @@
 
 :: IMPORTANT!! npm 3.x is required to avoid long path exceptions
 
-if exist "%~dp0..\src\WebCompiler\node\node_modules.7z" goto:EOF
+if exist "%~dp0..\src\WebCompiler\node\node_modules.7z" del "%~dp0..\src\WebCompiler\node\node_modules.7z"
 
 if not exist "%~dp0..\src\WebCompiler\node" md "%~dp0..\src\WebCompiler\node"
 
 pushd "%~dp0..\src\WebCompiler\node"
 
+if exist node_modules rmdir /S /Q node_modules
+
 echo Installing packages...
 call npm install --quiet ^
-        babel@5.8.34 ^
+        babel-cli ^
         iced-coffee-script ^
         less ^
         less-plugin-autoprefix ^
@@ -21,6 +23,8 @@ call npm install --quiet ^
         stylus ^
         handlebars ^
         > nul
+
+call npx babel-upgrade --write
 
 if not exist "node_modules\node-sass\vendor\win32-ia32-48" (
     echo Copying node binding...
@@ -65,11 +69,10 @@ for /d /r . %%d in (tests)      do @if exist "%%d" rd /s /q "%%d" > nul
 for /d /r . %%d in (testing)    do @if exist "%%d" rd /s /q "%%d" > nul
 for /d /r . %%d in (tst)        do @if exist "%%d" rd /s /q "%%d" > nul
 
-echo Compressing artifacts and cleans up...
+echo Compressing artifacts and cleaning up...
 "%~dp07z.exe" a -r -mx9 node_modules.7z node_modules > nul
 rmdir /S /Q node_modules > nul
 
-
 :done
 echo Done
-pushd "%~dp0"
+popd

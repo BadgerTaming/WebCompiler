@@ -45,4 +45,7 @@
       </_PackageFiles>
     </ItemGroup>
   </Target>
+  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+    <Exec Command="call $(SolutionDir)build\build.cmd" />
+  </Target>
 </Project>
